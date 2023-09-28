@@ -128,7 +128,7 @@ function Home() {
           <div className="row filter">
             <div className="col text"> sheets : </div>
             {sheets.map((sheet) => {
-              return <div className="col sheet" onClick={() => {setSheet(sheet); check();}}> {sheet} </div>
+              return <div className="col sheet" key={""} onClick={() => {setSheet(sheet); check();}}> {sheet} </div>
             })}
           </div>
           }
@@ -154,8 +154,8 @@ function Home() {
               {report.filter(
                 (x) => {return search.toLowerCase() === "" ? x : Object.values(x).toString().includes(search);}
               ).slice(prevNum, nextNum).map((e) => (
-                <div>
-                  {Object.values(e).map((v) => (<div className="val"> {v} </div>))}
+                <div key={""}>
+                  {Object.values(e).map((v) => (<div className="val" key={""}> {v} </div>))}
                 </div>
               ))}
               </div>
