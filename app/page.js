@@ -66,10 +66,10 @@ function Home() {
   
   useEffect(() => {
     if (Vheaders && Vheaders.length !== 0) {
-      const arr = []
-      for (let i = 0; i < Vheaders.length; i++) {
-        arr.push(Vheaders[i]);
-      }
+      const arr = [] 
+      Vheaders.map((header) => {
+        arr.push(Wsheet[header].v)
+      })
       if (headers.length !== 0) {
         setHeaders([])
         setHeaders(arr);
@@ -148,7 +148,7 @@ function Home() {
             </div>
             <div className="over">
               {headers.map((e) => {
-                return <div className="header">{ e }</div>
+                return <div key={""} className="header">{ e }</div>
               })}
               <div>
               {report.filter(
