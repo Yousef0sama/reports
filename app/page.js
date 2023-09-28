@@ -66,10 +66,10 @@ function Home() {
   
   useEffect(() => {
     if (Vheaders && Vheaders.length !== 0) {
-      const arr = [] 
-      Vheaders.map((header) => {
-        arr.push(Wsheet[header].v)
-      })
+      const arr = []
+      for (let i = 0; i < Vheaders.length; i++) {
+        arr.push(Vheaders[i]);
+      }
       if (headers.length !== 0) {
         setHeaders([])
         setHeaders(arr);
