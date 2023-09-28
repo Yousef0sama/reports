@@ -1,95 +1,172 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client"
 
-export default function Home() {
+import { useState, useEffect } from "react";
+import * as XSLX from "xlsx"
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import '../public/css/style.scss'
+
+function Home() {
+
+  const [report, setReport] = useState([]);
+  const [Vheaders, setVHeaders] = useState([]);
+  const [headers, setHeaders] = useState([]);
+  const [sheets, setSheets] = useState();
+  const [sheet, setSheet] = useState();
+  const [Wsheet, setWSheet] = useState();
+  const [file, setFile] = useState();
+  const [fileErr, setFileErr] = useState("");
+  const [search, setSearch] = useState("");
+  const [nextNum, setNextNum] = useState(100);
+  const [prevNum, setPrevNum] = useState(0);
+
+  const check = () => {
+    if (!file) {
+      setFileErr("Please select file");
+    } else {
+      setFileErr("");
+      let allowed = ["xls", "xlsx"];
+      if (!allowed.includes(file.name.slice(file.name.indexOf(".")+1, file.name.length).toLowerCase())) {
+        setFileErr("please input xlsx and xls files only");
+      } else {
+        setFileErr("ok");
+        const reader = new FileReader();
+        reader.readAsArrayBuffer(file)
+        reader.onload = (e) => {
+          const data = e.target.result
+          const workBook = XSLX.read(data ,{type : "buffer"});
+          const sheetNames = workBook.SheetNames;
+          setSheets(sheetNames);
+        }
+      }
+    }
+  }
+  
+  useEffect(()=>{
+    if (sheet) {
+      const reader = new FileReader();
+      reader.readAsArrayBuffer(file)
+      reader.onload = (e) => {  
+        const data = e.target.result
+        const workBook = XSLX.read(data ,{type : "buffer"});
+        const workSheet = workBook.Sheets[sheet];
+        const Data = XSLX.utils.sheet_to_json(workSheet)
+        setReport(Data)
+        setWSheet(workSheet)
+      }
+    }
+  }, [sheet])
+
+  useEffect(() => {
+    if (Wsheet) {
+      setVHeaders(Object.keys(Wsheet).filter((e) => {return e.includes("1")}).filter((e)=>{return e.length == 2}));
+    }
+    
+  }, [Wsheet])
+  
+  useEffect(() => {
+    if (Vheaders && Vheaders.length !== 0) {
+      const arr = [] 
+      Vheaders.map((header) => {
+        arr.push(Wsheet[header].v)
+      })
+      if (headers.length !== 0) {
+        setHeaders([])
+        setHeaders(arr);
+      } else {
+        setHeaders(arr);
+      }
+    }
+  }, [Vheaders])
+
+  const next = () => {
+    if (nextNum < report.length) {
+      setNextNum(nextNum + 100);
+      setPrevNum(prevNum + 100);
+    }
+  }
+
+  const prev = () => {
+    if (prevNum > 0) {
+      setNextNum(nextNum - 100)
+      if (prevNum < 100) {
+        setPrevNum(0);
+      } else {
+        setPrevNum(prevNum - 100);
+      }
+    }
+  }
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <div className="container-fulid light">
+      <div className="row">
+        {/* upload start */}
+        <div className="col col-sm-12 upload">
+          <div className="form">
+            <form>
+              <label for="file">
+                <span className="float-start text">Add File</span>
+                <span className="float-end rigth">
+                  <i class="bi bi-file-earmark-plus-fill"></i>
+                </span>
+              </label>
+              <input type="file" id="file" accept=".xls, .xlsx" onChange={(e) => { setFile(e.target.files[0]) }} />
+              <button type="button" className="view" onClick={() => { check(); }}>veiw</button>
+              <br />
+              <>{ fileErr && fileErr == "ok" && null}</>
+              <p className="err">{ fileErr && fileErr != "ok" && <><span><i class="bi bi-bug-fill"></i></span> { fileErr }</>}</p>
+            </form>
+          </div>
         </div>
+        {/* upload end */}
+        <span className="line"></span>
+        {/* sheets start */}
+        <div className="col col-sm-12 sheets">
+          {!sheets && <div className="no-data">no data here</div>}
+          {
+          sheets &&
+          <div className="row filter">
+            <div className="col text"> sheets : </div>
+            {sheets.map((sheet) => {
+              return <div className="col sheet" onClick={() => {setSheet(sheet); check();}}> {sheet} </div>
+            })}
+          </div>
+          }
+        </div>
+        {/* sheets end */}
+        {/* data show start */}
+        <div className="col col-sm-12 data">
+          {!headers || headers.length == 0 && sheets && <div className="no-data">no data here</div>}
+          {
+          headers && headers.length > 0 && 
+          <>
+            <div>
+              <input type="text" className="search" placeholder="Search" onChange={(e) => {setSearch(e.target.value)}}/>
+              <br />
+              <span onClick={() => {prev()}}> {"<<"} </span>
+              <span onClick={() => {next()}}> {">>"} </span>
+            </div>
+            <div className="over">
+              {headers.map((e) => {
+                return <div className="header">{ e }</div>
+              })}
+              <div>
+              {report.filter(
+                (x) => {return search.toLowerCase() === "" ? x : Object.values(x).toString().includes(search);}
+              ).slice(prevNum, nextNum).map((e) => (
+                <div>
+                  {Object.values(e).map((v) => (<div className="val"> {v} </div>))}
+                </div>
+              ))}
+              </div>
+            </div>
+          </>
+          }
+        </div>
+        {/* data show end */}
       </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    </div>
   )
 }
+
+export default Home

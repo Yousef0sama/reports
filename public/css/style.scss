@@ -1,0 +1,217 @@
+// vars
+
+$pri-color: rgb(0, 60, 255);
+$sec-color: rgb(0, 51, 180);
+$dark: rgb(196, 196, 196);
+$light: rgb(230, 230, 230);
+$D-shadow: -2px 2px 4px rgba(0,0,0,0.6),
+            -1px 1px 3px inset rgb(255,255,255,0.7);
+$H-shadow: -2px -2px 4px inset rgb(0,0,0,0.3),
+              0.5px 0.5px 4px inset rgb(0,0,0,0.3);
+$shadow: 12px 12px 5px rgba(0,0,0,0.4);
+
+/* puplic */
+
+* {
+  padding: 0px;
+  margin: 0px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  user-select: none;
+}
+
+.row {
+  margin: 0px;
+  padding: 0px;
+}
+
+.light {
+  background-color: $light;
+  min-height: 100vh;
+  height: fit-content;
+}
+
+/* uplod center */
+
+.upload {
+
+  .form {
+
+    padding: 50px;
+    padding-bottom: 10px;
+
+    input[type = "file"] {
+      display: none;
+    }
+
+    label {
+      padding: 10px 20px;
+      display: inline-block;
+      background-color: $pri-color;
+      color: rgb(255,255,255);
+      width: 200px;
+      border-radius: 10px;
+      height: 45px;
+      box-shadow: $D-shadow;
+      cursor: pointer;
+    }
+
+    label:hover{
+      background-color: $sec-color;
+      box-shadow: $H-shadow;
+    }
+
+    button{
+      background-color: $pri-color;
+      color: rgb(255,255,255);
+      width: 100px;
+      padding: 10px 20px;
+      border-radius: 10px;
+      height: 45px;
+      box-shadow: $D-shadow;
+      display: inline-block;
+      cursor: pointer;
+      border: none;
+      outline: none;
+      position: absolute;
+      margin-left: 20px;
+    }
+
+    button:hover{
+      background-color: $sec-color;
+      box-shadow: $H-shadow;
+    }
+
+    .err{
+      color: rgb(222, 0, 0);
+      font-weight: 600;
+      font-size: 17px;
+      padding-top: 15px;
+      padding-left: 15px;
+    }
+
+  }
+
+}
+
+.line{
+  width: 100%;
+  height: 5px;
+  background-color: $pri-color;
+  display: block;
+}
+
+.sheets{
+  margin: 20px 0px;
+  .no-data{
+    background-color: $dark;
+    padding: 15px;
+    width: 100%;
+    display: block;
+    margin-top: 30px;
+    text-align: center;
+  }
+  .filter{
+    .text{
+      max-width: 100px;
+      background-color: $dark;
+      padding: 10px;
+      margin: 10px;
+      border-radius: 10px;
+    }
+    .sheet{
+      background-color: $pri-color;
+      box-shadow: $D-shadow;
+      max-width: 100px;
+      margin: 10px;
+      color: $light;
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+      cursor: pointer;
+    }
+    .sheet:hover{
+      background-color: $sec-color;
+      box-shadow: $H-shadow;
+    }
+  }
+}
+
+.data{
+  .no-data{
+    background-color: $dark;
+    padding: 15px;
+    width: 100%;
+    display: block;
+    margin-top: 30px;
+    text-align: center;
+  }
+  .over{
+    width: fit-content;
+    max-width: 100%;
+    height: 75vh;
+    background-color: $dark;
+    margin: 20px 0px;
+    overflow: auto;
+    white-space: nowrap;
+    .header{
+      display: inline-block;
+      min-width: 200px;
+      float: none;
+      background-color: rgba($pri-color, 0.6);
+      color: rgb(255,255,255);
+      border: 3px solid $pri-color;
+      text-align: center;
+      padding: 5px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .val{
+      display: inline-block;
+      min-width: 200px;
+      float: none;
+      border: 3px solid $pri-color;
+      text-align: center;
+      padding: 5px;
+      font-size: 18px;
+    }
+    .val:hover{
+      background-color: rgba($pri-color, 0.6);
+      color: rgb(255,255,255);
+    }
+  }
+  .search{
+    outline: none;
+    border: none;
+    box-shadow: $D-shadow;
+    width: 300px;
+    padding: 10px;
+    padding-left: 20px;
+    border-radius: 25px;
+  }
+  .search:hover{
+    box-shadow: $H-shadow;
+  }
+  .search:focus{
+    box-shadow: $H-shadow;
+  }
+  span{
+    display: inline-block;
+    background-color: $pri-color;
+    color: rgb(255,255,255);
+    box-shadow: $D-shadow;
+    padding: 20px;
+    margin: 10px 20px;
+    width: 100px;
+    text-align: center;
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  span:hover{
+    background-color: $sec-color;
+    box-shadow: $H-shadow;
+  }
+}
